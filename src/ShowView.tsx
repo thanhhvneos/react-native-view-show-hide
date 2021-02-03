@@ -4,15 +4,15 @@ import { Animated, LayoutChangeEvent, Text, ViewStyle } from 'react-native'
 type Props = {
     children?: React.ReactNode
     style?: ViewStyle
-    removed?: boolean
-    onCallbackRemoved?: () => void
+    startAnimatedHide?: boolean
+    onCbEndAnimatedHide?: () => void
 }
 
 export default ({
     children,
     style,
-    removed,
-    onCallbackRemoved
+    startAnimatedHide,
+    onCbEndAnimatedHide
 }: Props) => {
     const [height, setHeight] = useState(0)
 
@@ -24,13 +24,13 @@ export default ({
     }, [])
 
     useEffect(() => {
-        if (removed) {
+        if (startAnimatedHide) {
             hideView()
         }
-    }, [removed])
+    }, [startAnimatedHide])
 
     const showView = () => {
-        const toHeight = { toValue: 1, duration: 300, useNativeDriver: false, delay: 200 }
+        const toHeight = { toValue: 1, duration: 300, useNativeDriver: false }
         const toOpacity = { toValue: 1, duration: 280, useNativeDriver: false }
 
         // animateOpacity.setValue(0)
@@ -50,7 +50,7 @@ export default ({
         Animated.sequence([
             Animated.timing(animateOpacity, toOpacity),
             Animated.timing(animateHeight, toHeight)
-        ]).start(onCallbackRemoved)
+        ]).start(onCbEndAnimatedHide)
     }
 
     return <Animated.View
@@ -60,10 +60,12 @@ export default ({
                 outputRange: [0, height]
             }) : undefined,
             opacity: animateOpacity,
+            backgroundColor: 'red',
             ...style
         }}
         onLayout={(e: LayoutChangeEvent) => {
-            if (height <= 0) setHeight(e.nativeEvent.layout.height)
+            const newHeight = e.nativeEvent.layout.height
+            if (newHeight > height) setHeight(newHeight)
         }}>
         {children}
     </Animated.View>

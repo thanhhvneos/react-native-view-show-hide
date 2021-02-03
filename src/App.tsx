@@ -4,14 +4,14 @@ import Box from './Box'
 import ShowView from './ShowView'
 
 const App = () => {
-    const [isStartRemoved, setStartRemoved] = useState(false)
+    const [isStartAnimatedHide, setStartAnimatedHide] = useState(false)
     const [isRemoved, setRemoved] = useState(false)
 
     const pressAdd = () => {
         if (isRemoved == false)
-            setStartRemoved(true) // remove
+            setStartAnimatedHide(true) // remove
         else {
-            setStartRemoved(false)
+            setStartAnimatedHide(false)
             setRemoved(false) // add new
         }
     }
@@ -20,11 +20,16 @@ const App = () => {
 
         <ScrollView>
             {isRemoved == false && <ShowView
-                removed={isStartRemoved}
-                onCallbackRemoved={() => {
-                    setStartRemoved(false)
+                style={{ padding: 20 }}
+                startAnimatedHide={isStartAnimatedHide}
+                onCbEndAnimatedHide={() => {
+                    setStartAnimatedHide(false)
                     setRemoved(true)
                 }}>
+                <Text style={styles.text}>Hello, world!</Text>
+                <Text style={styles.text}>Hello, world!</Text>
+                <Text style={styles.text}>Hello, world!</Text>
+                <Text style={styles.text}>Hello, world!</Text>
                 <Text style={styles.text}>Hello, world!</Text>
             </ShowView>}
 
@@ -50,7 +55,6 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     text: {
-        marginVertical: 20,
         alignSelf: 'center',
         fontSize: 30
     }
