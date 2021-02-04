@@ -3,48 +3,41 @@ import { View, Text, StyleSheet, SafeAreaView, Button, Animated, ScrollView } fr
 import Box from './Box'
 import ShowView from './ShowView'
 
+const MAX = 8
+
 const App = () => {
-    const [isStartAnimatedHide, setStartAnimatedHide] = useState(false)
-    const [isRemoved, setRemoved] = useState(false)
+    const [count, setCount] = useState(Math.floor(Math.random() * MAX))
 
     const pressAdd = () => {
-        if (isRemoved == false)
-            setStartAnimatedHide(true) // remove
-        else {
-            setStartAnimatedHide(false)
-            setRemoved(false) // add new
-        }
+        if (count < MAX) setCount(count + 1)
+        else setCount(Math.floor(Math.random() * MAX))
+    }
+
+    const arr = []
+    for (let i = 0; i < count; i++) {
+        arr.push(<Text
+            key={i.toString()}
+            style={styles.text}>Hello, world! {i + 1}</Text>)
     }
 
     return <SafeAreaView style={styles.view}>
 
-        <ScrollView>
-            {isRemoved == false && <ShowView
-                style={{ padding: 20 }}
-                startAnimatedHide={isStartAnimatedHide}
-                onCbEndAnimatedHide={() => {
-                    setStartAnimatedHide(false)
-                    setRemoved(true)
-                }}>
-                <Text style={styles.text}>Hello, world!</Text>
-                <Text style={styles.text}>Hello, world!</Text>
-                <Text style={styles.text}>Hello, world!</Text>
-                <Text style={styles.text}>Hello, world!</Text>
-                <Text style={styles.text}>Hello, world!</Text>
-            </ShowView>}
+        <ShowView
+            style={{ padding: 20 }} >
+            {arr}
+        </ShowView>
 
-            <Box
-                color='blue'
-            />
+        <Box
+            color='blue'
+        />
 
-            <Text style={styles.text}>Hello, world!</Text>
+        <Text style={styles.text}>{count}</Text>
 
-            <View style={{ flex: 1 }} />
+        <View style={{ flex: 1 }} />
 
-            <Button
-                title='ADD'
-                onPress={pressAdd} />
-        </ScrollView>
+        <Button
+            title='ADD'
+            onPress={pressAdd} />
 
     </SafeAreaView>
 }

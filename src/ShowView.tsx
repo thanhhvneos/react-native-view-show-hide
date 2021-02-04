@@ -1,71 +1,58 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Animated, LayoutChangeEvent, Text, ViewStyle } from 'react-native'
+import React, { useRef, useState } from 'react'
+import { Animated, LayoutChangeEvent, ViewStyle } from 'react-native'
 
 type Props = {
     children?: React.ReactNode
     style?: ViewStyle
-    startAnimatedHide?: boolean
-    onCbEndAnimatedHide?: () => void
 }
 
 export default ({
     children,
-    style,
-    startAnimatedHide,
-    onCbEndAnimatedHide
+    style
 }: Props) => {
-    const [height, setHeight] = useState(0)
+    const [attackedToParent, setAttackedToParent] = useState(false)
+    const [isAnimating, setAnimating] = useState(false)
 
-    const animateHeight = useRef(new Animated.Value(0)).current
     const animateOpacity = useRef(new Animated.Value(0)).current
+    const animateHeight = useRef(new Animated.Value(0)).current
 
-    useEffect(() => {
-        showView()
-    }, [])
+    const changeView = (newHei: number) => {
+        if (newHei <= 0) return
 
-    useEffect(() => {
-        if (startAnimatedHide) {
-            hideView()
-        }
-    }, [startAnimatedHide])
-
-    const showView = () => {
-        const toHeight = { toValue: 1, duration: 300, useNativeDriver: false }
-        const toOpacity = { toValue: 1, duration: 280, useNativeDriver: false }
-
-        // animateOpacity.setValue(0)
-        // animateHeight.setValue(0)
+        const toHeight = { toValue: newHei, duration: 220, useNativeDriver: false }
+        animateOpacity.setValue(0)
+        setAnimating(true)
         Animated.sequence([
             Animated.timing(animateHeight, toHeight),
-            Animated.timing(animateOpacity, toOpacity)
-        ]).start()
-    }
-
-    const hideView = () => {
-        const toOpacity = { toValue: 0, duration: 200, useNativeDriver: false }
-        const toHeight = { toValue: 0, duration: 280, useNativeDriver: false }
-
-        // animateOpacity.setValue(1)
-        // animateHeight.setValue(1)
-        Animated.sequence([
-            Animated.timing(animateOpacity, toOpacity),
-            Animated.timing(animateHeight, toHeight)
-        ]).start(onCbEndAnimatedHide)
+            Animated.timing(animateOpacity, {
+                toValue: 1,
+                duration: 180,
+                useNativeDriver: false
+            }),
+            Animated.delay(50)
+        ]).start(() => {
+            setAnimating(false)
+        })
     }
 
     return <Animated.View
         style={{
-            height: height > 0 ? animateHeight.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, height]
-            }) : undefined,
-            opacity: animateOpacity,
-            backgroundColor: 'red',
+            height: attackedToParent ? (isAnimating ? animateHeight : undefined) : undefined,
+            opacity: attackedToParent ? animateOpacity : 0,
+            position: attackedToParent ? 'relative' : 'absolute',
             ...style
         }}
         onLayout={(e: LayoutChangeEvent) => {
             const newHeight = e.nativeEvent.layout.height
-            if (newHeight > height) setHeight(newHeight)
+            if (newHeight > 0) {
+                if (attackedToParent == false) {
+                    setAttackedToParent(true)
+                }
+
+                if (isAnimating == false) {
+                    changeView(newHeight)
+                }
+            }
         }}>
         {children}
     </Animated.View>
