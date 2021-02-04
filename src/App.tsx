@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { View, Text, StyleSheet, SafeAreaView, Button, Animated, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, SafeAreaView, Button, Animated, ScrollView, Image } from 'react-native'
 import Box from './Box'
+import ImgFromUrl from './ImgFromUrl'
 import ShowView from './ShowView'
 
 const MAX = 8
@@ -22,22 +23,36 @@ const App = () => {
 
     return <SafeAreaView style={styles.view}>
 
-        <ShowView
+        {/* <ShowView
             style={{ padding: 20 }} >
             {arr}
-        </ShowView>
+        </ShowView> */}
 
-        <Box
-            color='blue'
-        />
+        <ScrollView>
 
-        <Text style={styles.text}>{count}</Text>
+            <Image
+                source={{ uri: 'https://contents.file-server.net/store/5/post-item-image/33746608/ca6cd942-9cc0-4f3c-96b4-865830a6be4a-high.png' }}
+                style={{
+                    width: '100%',
+                    height: undefined,
+                    aspectRatio: 1.5,
+                }} />
 
-        <View style={{ flex: 1 }} />
+            {/* <View style={{ height: 1 }} /> */}
 
-        <Button
-            title='ADD'
-            onPress={pressAdd} />
+            <ImgFromUrl
+                uri='https://contents.file-server.net/store/5/post-item-image/33746608/ca6cd942-9cc0-4f3c-96b4-865830a6be4a-high.png'
+                style={{ marginTop: 20 }} />
+
+            <ImgFromUrl
+                uri={null}
+                style={{ marginTop: 20 }} />
+
+            <Button
+                title='ADD'
+                onPress={pressAdd} />
+
+        </ScrollView>
 
     </SafeAreaView>
 }
@@ -45,7 +60,8 @@ const App = () => {
 const styles = StyleSheet.create({
     view: {
         flex: 1,
-        alignItems: 'center'
+        alignItems: 'center',
+        // backgroundColor: 'red'
     },
     text: {
         alignSelf: 'center',
